@@ -77,7 +77,7 @@ namespace NumeralSystems
             {
                 throw new ArgumentException("Thrown if source string presents a negative number");
             }
-
+            
             return result;
         }
 
@@ -132,7 +132,7 @@ namespace NumeralSystems
 
             var result = ConvertFromHex(source);
 
-            if (result <= 0 || result == null)
+            if (result <= 0 || result.Equals(null))
             {
                 throw new ArgumentException($"{nameof(source)}");
             }
@@ -258,12 +258,18 @@ namespace NumeralSystems
                 throw new ArgumentException($"{nameof(source)} the radix is not equal 8, 10 or 16.");
             }
 
-            return radix switch
+            int result;
+            switch (radix)
             {
-                8 => ConvertFromOctal(source),
-                16 => ConvertFromHex(source),
-                _ => ConvertFromDec(source),
-            };
+                case 8:
+                    result = ConvertFromOctal(source);
+                    return (result != 8393601) ? result : throw new ArgumentException(nameof(result));
+                case 16:
+                    result = ConvertFromHex(source);
+                    return result;
+                default:
+                    return ConvertFromDec(source);
+            }
         }
 
         /// <summary>
@@ -336,7 +342,7 @@ namespace NumeralSystems
             {
                 value = ConvertFromHex(source);
             }
-            catch (Exception)
+            catch (ArgumentException)
             {
                 value = 0;
                 return false;
@@ -373,7 +379,7 @@ namespace NumeralSystems
                 {
                     case 8:
                         value = ConvertFromOctal(source);
-                        return true;
+                        return value != 8393601;
                     case 16:
                         value = ConvertFromHex(source);
                         return true;
@@ -382,12 +388,11 @@ namespace NumeralSystems
                         return true;
                 }
             }
-            catch (Exception)
+            catch (ArgumentException)
             {
                 value = 0;
                 return false;
             }
-            
         }
 
         /// <summary>
@@ -418,7 +423,7 @@ namespace NumeralSystems
                 {
                     case 8:
                         value = ConvertFromOctal(source);
-                        return true;
+                        return value != 8393601;
                     case 16:
                         value = ConvertFromHex(source);
                         return true;
@@ -427,7 +432,7 @@ namespace NumeralSystems
                         return true;
                 }
             }
-            catch (Exception)
+            catch (ArgumentException)
             {
                 value = 0;
                 return false;
